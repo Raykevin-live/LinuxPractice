@@ -1,4 +1,4 @@
-game:game.o main.o
+game:game.o main.o probar.o
 	gcc $^ -o $@
 
 %.o:%.c
