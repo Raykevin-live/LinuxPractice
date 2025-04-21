@@ -1,0 +1,6 @@
+hello Linux!
+hello Linux!
+hello Linux!
+hello Linux!
+hello Linux!
+fd: 3
