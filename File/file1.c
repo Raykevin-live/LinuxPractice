@@ -17,13 +17,17 @@ int main()
 		return 1;
 	}
 	dup2(fd, 1);
+	close(fd);
 	printf("fd: %d\n", fd);
-	const char* message = "hello Linux!\n";
-	int cnt = 5;
-	while(cnt--)
-	{
-		write(1, message, strlen(message));
-	}
+	printf("Hello Linux!\n");
+	fprintf(stdout, "hello world!\n");
+
+	//const char* message = "hello Linux!\n";
+	//int cnt = 5;
+	//while(cnt--)
+	//{
+	//	write(1, message, strlen(message));
+	//}
 
 	return 0;
 }

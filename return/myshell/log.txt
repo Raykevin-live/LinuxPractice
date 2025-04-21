@@ -1,0 +1,18 @@
+log.txt
+Makefile
+[0m[01;32mmyshell[0m
+myshell.c
+total 40
+drwxrwxr-x 2 cf cf  4096  4月 21 14:53 [0m[01;34m.[0m
+drwxrwxr-x 4 cf cf  4096  4月 19 18:07 [01;34m..[0m
+-rw-rw-r-- 1 cf cf    51  4月 21 14:53 log.txt
+-rw-rw-r-- 1 cf cf   105  4月 19 21:50 Makefile
+-rwxrwxr-x 1 cf cf 17472  4月 21 14:53 [01;32mmyshell[0m
+-rw-rw-r-- 1 cf cf  3969  4月 21 14:53 myshell.c
+total 40
+drwxrwxr-x 2 cf cf  4096  4月 21 14:53 [0m[01;34m.[0m
+drwxrwxr-x 4 cf cf  4096  4月 19 18:07 [01;34m..[0m
+-rw-rw-r-- 1 cf cf   380  4月 21 14:54 log.txt
+-rw-rw-r-- 1 cf cf   105  4月 19 21:50 Makefile
+-rwxrwxr-x 1 cf cf 17472  4月 21 14:53 [01;32mmyshell[0m
+-rw-rw-r-- 1 cf cf  3969  4月 21 14:53 myshell.c

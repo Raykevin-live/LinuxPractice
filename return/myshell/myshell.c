@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <ctype.h>
 
 #define LEFT "["
 #define RIGHT "]"
@@ -14,6 +17,11 @@
 #define ARGC_SIZE 30
 #define EXIT_CODE 44
 
+#define NONE -1
+#define IN_RDIR 0
+#define OUT_RDIR 1
+#define APPEND_RDIR 2
+
 int lastcode = 0;
 extern char **environ;	
 char commandline[LINE_SIZE];
@@ -21,7 +29,8 @@ char *argv[ARGC_SIZE];
 char pwd[LINE_SIZE];
 char myenv[LINE_SIZE];
 int quit = 0;
-
+char *rdirfilename = NULL;
+int rdir = NONE;
 const char *getusername()
 {
 	return getenv("USER");
@@ -34,6 +43,43 @@ void getpwd()
 {
 	getcwd(pwd, sizeof(pwd)-1);
 }
+void check_redir(char *cmd)
+{
+	//ls -al >/</>> filename.txt
+	char *pos = cmd;
+	while(*pos)
+	{
+		if(*pos=='>')
+		{
+			*pos++ = '\0';
+			if(*pos =='>')
+			{
+				*pos++ = '\0';
+				while(isspace(*pos)) pos++;
+				rdirfilename = pos;
+				rdir = APPEND_RDIR;
+				break;
+			}
+			else
+			{
+				while(isspace(*pos)) pos++;
+				rdirfilename = pos;
+				rdir = OUT_RDIR;
+				break;
+			}
+		}
+		else if(*pos=='<')
+		{
+			*pos ++ = '\0';
+			while(isspace(*pos)) pos++;
+			rdirfilename = pos;
+			rdir = IN_RDIR;
+			break;
+		}
+		pos++;
+	}
+}
+
 void interact(char *cline, int size)
 {
 	getpwd();
@@ -42,6 +88,8 @@ void interact(char *cline, int size)
 	assert(s);
 	(void)s; // 有些编译器声明了变量不使用会报错
 	cline[strlen(cline)-1] = '\0'; // 去掉结尾的 '\n'
+	// ls -a -l > myfile.txt
+	check_redir(cline);
 }
 int splitstring(char cline[], char *_argv[])
 {
@@ -60,9 +108,30 @@ void normalexcute(char *_argv[])
 	}
 	else if(id == 0)
 	{
+		// 重定向
+		int fd = 0;
+		if(rdir == IN_RDIR)
+		{
+			fd = open(rdirfilename, O_RDONLY);
+			dup2(fd, 0);
+		}
+		else if(rdir == OUT_RDIR)
+		{
+			fd = open(rdirfilename, O_CREAT|O_WRONLY|O_TRUNC, 0666);
+			dup2(fd, 1);
+		}
+		else if(rdir == APPEND_RDIR)
+		{
+			fd = open(rdirfilename, O_CREAT|O_WRONLY|O_APPEND, 0666);
+			dup2(fd, 1);
+		}
 		// 子进程执行命令
 		//execvpe(_argv[0], _argv, environ);
 		execvp(_argv[0], _argv); // 子进程也可以拿到环境变量
+		if(fd!= 0)
+		{
+			close(fd);
+		}
 		exit(EXIT_CODE);
 	}
 	else
@@ -123,6 +192,8 @@ int main()
 {
 	while(!quit)
 	{
+		rdirfilename = NULL;
+		rdir = NONE;
 		// 2. 交互问题，获取命令行
 		interact(commandline, sizeof(commandline));
 		int argc = splitstring(commandline, argv);
