@@ -1,1 +1,4 @@
-./myfile
+hello write
+hello printf
+hello fprintf
+hello fwrite
