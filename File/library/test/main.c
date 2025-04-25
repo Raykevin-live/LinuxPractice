@@ -1,8 +1,12 @@
 #include "mymath.h"
-#include <stdio.h>
+#include "mylog.h"
+#include "myprint.h"
 
 int main()
 {
-	printf("1+1=%d\n", add(1, 1));
+	int n = div(10, 0);
+	printf("10/0=%d, errno=%d\n", n, myerrno);
+	print();
+	Log("Linux test log!");
 	return 0;
 }
