@@ -1,5 +1,4 @@
 #include "comm.hpp"
-
 using namespace std;
 
 //管理管道文件
