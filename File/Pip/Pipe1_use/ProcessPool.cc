@@ -31,7 +31,7 @@ public:
     std::string _processname; // 子进程的名字 -- 方便我们打印日志
 };
 
-void slaver(){
+void slaver(){ // 读端
     while(true){
         // std::cout<<getpid()<<" - "<<"read fd is : "<<rfd<<std::endl;
         // sleep(1);

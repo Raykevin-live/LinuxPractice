@@ -1,17 +1,23 @@
 #include "comm.hpp"
+#include "log.hpp"
 using namespace std;
 
 //管理管道文件
 int main(){
     // 创建信道
     Init init;
+    Log log;
+    log.Enable(Onefile);
     // sleep(5);
     //打开信道
     int fd = open(FIFO_FILE, O_RDONLY); // 等待写入方打开之后，自己才会打开文件，向后执行；反之，打开写端也是一样的 open会被阻塞
     if(fd < 0){
-        perror("open");
+        // perror("open");
+        log.logmessage(Fatal, "error string: %s, error_code: %d", strerror(errno), errno);
         exit(FIFO_OPEN_ERR);
     }
+
+    log.logmessage(Info, "server open file done: %s, error_code: %d", strerror(errno), errno);
 
     //开始通信
     while(true){
