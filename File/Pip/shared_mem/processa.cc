@@ -2,9 +2,6 @@
 
 
 int main(){
-    // 一旦有了共享内存，挂接到自己的地址空间中，你直接把她当成你自己的内存空间来使用即可！
-    // 不需要系统调用
-    // 也不需要缓冲区
     sleep(3);
     int shmid = CreateShm();
     log(Debug, "create shm done, shmid is %d", shmid);
@@ -18,6 +15,19 @@ int main(){
     log(Debug, "detach shm done, shmaddr: 0x%x", shmaddr);
 
     // ipc code 在这里
+    // 一旦有人把数据写入共享内存，其实我们立马就能看到了！！
+    // 不需要经过系统调用
+    struct shmid_ds shmds;
+    while(true){
+        cout<<"client say@ "<<shmaddr<<endl;
+        sleep(1);
+        
+        shmctl(shmid, IPC_STAT, &shmds);
+        cout<<"shm size: "<<shmds.shm_segsz<<endl;
+        cout<<"shm nattch: "<<shmds.shm_nattch<<endl;
+        printf("key: 0x%x", shmds.shm_perm.__key);
+        cout<<"shm mode: "<<shmds.shm_perm.mode<<endl;
+    }
 
     sleep(20);
     shmctl(shmid, IPC_RMID, nullptr);
