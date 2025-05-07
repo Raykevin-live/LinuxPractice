@@ -10,7 +10,7 @@ int main(){
         exit(FIFO_OPEN_ERR);
     }
     cout<<"client open file done\n";
-    log.logmessage(Fatal, "error string: %s, error_code: %d", strerror(errno), errno);
+    log(Fatal, "error string: %s, error_code: %d", strerror(errno), errno);
 
     string line;
     while(true){
