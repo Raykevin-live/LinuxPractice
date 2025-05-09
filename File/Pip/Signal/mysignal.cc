@@ -10,11 +10,18 @@ void myhander(int signo){
 }
 
 int main(){
-    signal(SIGINT, myhander); // 只需设置一次，往后都有效
-    while(true){
-        cout<<"I am a man\n";
+
+    int n = alarm(5);
+    signal(SIGALRM, myhander);
+    while(1){
+        cout<<"proc is running ... "<<endl;
         sleep(1);
     }
+    // signal(SIGINT, myhander); // 只需设置一次，往后都有效
+    // while(true){
+    //     cout<<"I am a man\n";
+    //     sleep(1);
+    // }
 
     return 0;
 }
