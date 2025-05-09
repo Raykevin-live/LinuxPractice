@@ -1,8 +1,8 @@
-signalset:signalset.cc
+action:action.cc
 	g++ -o $@ $^ -std=c++11
 .PHONY:clean
 clean:
-	rm -f signalset
+	rm -f action
 .PHONY:run
 run:
-	@./signalset
+	@./action
