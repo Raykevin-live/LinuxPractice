@@ -2,35 +2,53 @@
 #include "task.hpp"
 
 void *Consumer(void *args){
-    BlockQueue<int> *bq = static_cast<BlockQueue<int>*>(args);
+    BlockQueue<Task> *bq = static_cast<BlockQueue<Task>*>(args);
 
     while(true){
         // 消费
-       int data = bq->pop();
-        std::cout<<"消费了一个数据： "<<data<<endl;
+       Task data = bq->pop();
+       // 计算
+       data.run();
+        std::cout<<"处理任务： " <<data.GetTask()<<"结果是："<<data.GetResult()<<endl;
     }
 }
 
 void *Productor(void *args){
-    BlockQueue<int> *bq = static_cast<BlockQueue<int>*>(args);
-    int data = 0;
+    int len = opers.size();
+    BlockQueue<Task> *bq = static_cast<BlockQueue<Task>*>(args);
+    // int data1 = 0;
     while(true){
+        int data1 = rand()%10+1;
+        usleep(10);
+        int data2 = rand()%10 +1 ;
+        char op = opers[rand()%len];
+        
+        Task t(data1, data2, op);
+        bq->push(t);
+        cout<<"生产了一个任务："<<t.GetTask()<<" thread id: "<<pthread_self()<<endl;
         sleep(1);
-        data++;
-        bq->push(data);
-        cout<<"生产了一个数据："<<data<<endl;
     }
 }
 
 int main(){
     // 可以传任务
-    BlockQueue<int> *bq = new BlockQueue<int>();
-    pthread_t c, p;
-    pthread_create(&c, nullptr, Consumer, bq);
-    pthread_create(&p, nullptr, Productor, bq);
+    srand(time(nullptr));
+    BlockQueue<Task> *bq = new BlockQueue<Task>();
+    pthread_t c[3], p[5];
 
-    pthread_join(c, nullptr);
-    pthread_join(p, nullptr);
+    for(int i=0; i<3; i++){
+        pthread_create(c+i, nullptr, Consumer, bq);
+    }
+    for(int i=0; i<5; i++){
+        pthread_create(p+i, nullptr, Productor, bq);
+    }
+
+    for(int i=0; i<3; i++){
+        pthread_join(c[i], nullptr);
+    }
+    for(int i=0; i<5; i++){
+        pthread_join(p[i], nullptr);
+    }
     delete bq;
     return 0;
 }
