@@ -1,9 +1,9 @@
-mythread:mythread.cc
-	g++ -o mythread mythread.cc
+mycond:mycond.cc
+	g++ -o mycond mycond.cc
 .PHONY:clean
 clean:
-	rm -f mythread
+	rm -f mycond
 .PHONY:run
 run:
-	@./mythread
+	@./mycond
 
