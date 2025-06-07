@@ -8,8 +8,9 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <functional>
+#include <unordered_map>
 
-using func_t = std::function<std::string(const std::string&)>;
+using func_t = std::function<std::string(const std::string&, const std::string&, uint16_t)>;
 Log lg;
 
 enum{
@@ -51,6 +52,19 @@ public:
         lg(Info, "bind success, addr: %s", _ip.c_str());
 
     }
+    void UserCheck(const std::string& ip, const struct sockaddr_in& client){
+        auto iter = user_list.find(ip);
+        if(iter==user_list.end()){
+            user_list.insert({ip, client});
+            std::cout<<"User# ["<<ip<<"] is add.."<<std::endl;
+        }
+    }
+    void Broadcast(const std::string& info){
+        for(const auto& user : user_list){
+            socklen_t len = sizeof(user.second);
+            sendto(_socketfd, info.c_str(), info.size(), 0, (sockaddr*)&user.second, len);
+        }
+    }
     void Run(func_t func){ // 对代码进行分层
         _isrunning = true;
         char inbuffer[size];
@@ -64,12 +78,16 @@ public:
             }
             inbuffer[n] = '\0';
 
+            uint16_t clientport = ntohs(client.sin_port);
+            std::string clientip = inet_ntoa(client.sin_addr); 
+            UserCheck(clientip, client);
             // 处理一次数据
-            std::string info = inbuffer;
-            // std::string echo_string = "server echo# "+info;
-            std::string echo_string = func(info);// 处理字符串
+            std::string info = func(inbuffer, clientip, clientport);
 
-            sendto(_socketfd, echo_string.c_str(), echo_string.size(), 0, (sockaddr*)&client, len);
+            Broadcast(info);
+            // std::string echo_string = "server echo# "+info;
+            // std::string echo_string = func(info, clientip, clientport);// 处理字符串
+            // sendto(_socketfd, echo_string.c_str(), echo_string.size(), 0, (sockaddr*)&client, len);
         }
 
     }
@@ -84,4 +102,5 @@ private:
     std::string _ip;
     uint16_t _port;// 表明服务器进程的端口号
     bool _isrunning;
+    std::unordered_map<std::string, struct sockaddr_in> user_list;
 };
