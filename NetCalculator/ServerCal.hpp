@@ -1,6 +1,11 @@
 #pragma once
 #include "Protocol.hpp"
 
+enum {
+    DIV_ZERO = 1,
+    MODE_ZERO,
+    OTHER_OPER
+};
 class ServerCal{
 public:
     ServerCal(){
@@ -13,7 +18,29 @@ public:
         case '+':
             resp.result = req.x + req.y;
             break;
+        case '-':
+            resp.result = req.x - req.y;
+            break;
+        case '*':
+            resp.result = req.x * req.y;
+            break;
+        case '/':
+            if(req.y == 0){
+                resp.code = DIV_ZERO;
+            }
+            else{
+                resp.result = req.x / req.y;
+            }
+            break;
+        case '%':
+            if(req.y ==0){
+                resp.code = MODE_ZERO;
+            }
+            else{
+                resp.result = req.x % req.y;
+            }
         default:
+            resp.code = OTHER_OPER;
             break;
         }
         return resp;
@@ -21,10 +48,10 @@ public:
     std::string Calculator(std::string &package){
         std::string content;
         bool r = Decode(package, &content);
-        if( !r) return;
+        if( !r) return "";
         Request req;
         r = req.Deserialize(content);
-        if(!r) return;
+        if(!r) return "";
 
         content.clear();
         Response resp = CalculatorHelper(req);

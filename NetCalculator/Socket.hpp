@@ -65,11 +65,25 @@ public:
         *clientport = ntohs(peer.sin_port);
         return newfd;
     }
-    int Connect(){
-        return 0;
+    bool Connect(const std::string& ip, const uint16_t &port){
+        struct sockaddr_in peer;
+        memset(&peer, 0, sizeof(peer));
+        peer.sin_family = AF_INET;
+        peer.sin_port = htons(port);
+        inet_pton(AF_INET, ip.c_str(), &peer.sin_addr);
+        
+        int n = connect(sockfd_, (struct sockaddr*)&peer, sizeof(peer));
+        if(n==-1){
+            std::cerr<<"connet to "<<ip<<":"<<port<<" error"<<std::endl;
+            return false;
+        }
+        return true;
     }
     void Close(){
         close(sockfd_);
+    }
+    int Fd()const{
+        return sockfd_;
     }
 private:
     int sockfd_;

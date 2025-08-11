@@ -15,7 +15,7 @@ inline std::string Encode(const std::string &content){
     return package;
 }
 
-inline bool Decode(const std::string &package, std::string *content){
+inline bool Decode(std::string &package, std::string *content){
     std::size_t pos = package.find(protocol_sep);
     if(pos == std::string::npos) return false;
     std::string len_str = package.substr(0, pos);
@@ -25,6 +25,8 @@ inline bool Decode(const std::string &package, std::string *content){
     std::size_t total_len = len_str.size() + len + 2;
     if(package.size() < total_len) return false;
     *content = package.substr(pos+1, len);
+    // erase 移除报文 package.erase(0, total_len);
+    package.erase(0, total_len);
 
     return true;
 }
@@ -59,6 +61,9 @@ public:
         y = std::stoi(part_y);
         return true;
     }
+    void DebugPrint(){
+        std::cout<<"新请求构建完成: "<<x<<op<<y<<"=?"<<std::endl;
+    }
 public:
     // x op y
     int x;
@@ -88,6 +93,10 @@ public:
         result = std::stoi(part_left);
         code = std::stoi(part_right);
         return true;
+    }
+
+    void DebugPrint(){
+        std::cout<<"结果响应完成, 结果为: "<<result<<" 相应码: "<<code<<std::endl;
     }
 
 public:
