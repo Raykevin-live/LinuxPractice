@@ -48,14 +48,14 @@ int main(int argc, char* argv[]){
         /// 模拟多个请求
         std::cout<<"打印最新的发出请求: \n"<<package;
         ssize_t len = write(sockfd.Fd(), package.c_str(), package.size());
-        std::cout<<"打印最新的发出请求: \n"<<package;
-        len = write(sockfd.Fd(), package.c_str(), package.size());
-        std::cout<<"打印最新的发出请求: \n"<<package;
-        len = write(sockfd.Fd(), package.c_str(), package.size());
-        std::cout<<"打印最新的发出请求: \n"<<package;
-        len = write(sockfd.Fd(), package.c_str(), package.size());
-        std::cout<<"打印最新的发出请求: \n"<<package;
-        len = write(sockfd.Fd(), package.c_str(), package.size());
+        // std::cout<<"打印最新的发出请求: \n"<<package;
+        // len = write(sockfd.Fd(), package.c_str(), package.size());
+        // std::cout<<"打印最新的发出请求: \n"<<package;
+        // len = write(sockfd.Fd(), package.c_str(), package.size());
+        // std::cout<<"打印最新的发出请求: \n"<<package;
+        // len = write(sockfd.Fd(), package.c_str(), package.size());
+        // std::cout<<"打印最新的发出请求: \n"<<package;
+        // len = write(sockfd.Fd(), package.c_str(), package.size());
 
         char buffer[128];
         ssize_t n = read(sockfd.Fd(), buffer, sizeof(buffer)); //无法保证读到完整的报文

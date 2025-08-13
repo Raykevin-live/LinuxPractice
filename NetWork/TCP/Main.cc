@@ -13,6 +13,7 @@ int main(int argc, char *argv[]){
     std::unique_ptr<TcpServer> tcp_svr(new TcpServer(port));
 
     tcp_svr->InitServer();
+    Daemon(); // 守护进程
     tcp_svr->Start();
 
     return 0;

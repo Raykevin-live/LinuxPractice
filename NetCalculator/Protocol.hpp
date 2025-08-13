@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <string>
+#include <jsoncpp/json/json.h>
+
+// #define Myself 1
 
 const std::string blank_space_sep = " ";
 const std::string protocol_sep = "\n";
@@ -34,6 +37,7 @@ class Request{
 public:
     Request(int data1, int data2, char oper):x(data1), y(data2), op(oper){}
     bool Serialize(std::string *out){
+#ifdef Myself
         // struct -> string
         // 构建报文有效载荷
         std::string s = std::to_string(x);
@@ -44,9 +48,21 @@ public:
         
         *out = s;
         return true;
+#else
+        Json::Value root;
+        root["x"] = x;
+        root["y"] = y;
+        root["op"] = op;
+
+        Json::FastWriter w;
+        *out = w.write(root);
+        return true;
+#endif
     }
     Request(){}
+
     bool Deserialize(const std::string &in){ // x + y 
+#ifdef Myself
         std::size_t left = in.find(blank_space_sep);
         if(left == std::string::npos) return false;
         std::string part_x = in.substr(0, left);
@@ -60,6 +76,15 @@ public:
         x = std::stoi(part_x);
         y = std::stoi(part_y);
         return true;
+#else
+        Json::Value root;
+        Json::Reader r;
+        r.parse(in, root);
+        x = root["x"].asInt();
+        y = root["y"].asInt();
+        op = root["op"].asInt();
+        return true;
+#endif
     }
     void DebugPrint(){
         std::cout<<"新请求构建完成: "<<x<<op<<y<<"=?"<<std::endl;
@@ -75,16 +100,26 @@ class Response{
 public:
     Response(int res, int c):result(res), code(c){}
     bool Serialize(std::string *out){
+#ifdef Myself 
         std::string s = std::to_string(result);
         s += blank_space_sep;
         s += std::to_string(code);
 
         *out = s;
         return true;
+#else
+        Json::Value root;
+        Json::FastWriter w;
+        root["result"] = result;
+        root["code"] = code;
+        *out = w.write(root);
+        return true;
+#endif
     }
     Response(){}
     
     bool Deserialize(const std::string &in){ //"result code"
+#ifdef Myself
         std::size_t left = in.find(blank_space_sep);
         if(left == std::string::npos) return false;
         std::string part_left = in.substr(0, left);
@@ -93,6 +128,15 @@ public:
         result = std::stoi(part_left);
         code = std::stoi(part_right);
         return true;
+#else
+        Json::Value root;
+        Json::Reader r;
+        r.parse(in, root);
+        result = root["result"].asInt();
+        code = root["code"].asInt();
+
+        return true;
+#endif
     }
 
     void DebugPrint(){

@@ -1,6 +1,7 @@
 #include "TcpServer.hpp"
 #include "Protocol.hpp"
 #include "ServerCal.hpp"
+#include <unistd.h>
 
 // int main(){
 //     Request req(123, 456, '+');
@@ -31,6 +32,7 @@ int main(int argc, char* argv[]){
     ServerCal cal;
     TcpServer* tsvp = new TcpServer(port, std::bind(&ServerCal::Calculator, &cal, std::placeholders::_1));
     tsvp->InitServer();
+    daemon(0, 0);
     tsvp->Start();
 
     return 0;
