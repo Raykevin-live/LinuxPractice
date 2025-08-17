@@ -30,6 +30,8 @@ public:
             lg(Fatal, "socket error, %s: %d", strerror(errno), errno);
             exit(SocketErr);
         }
+        int opt = 1;
+        setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     }
     void Bind(uint16_t port){
         struct sockaddr_in local;
