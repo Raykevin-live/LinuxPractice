@@ -127,7 +127,7 @@ public:
         content.resize(len);
         // in.read((char*)content.c_str(), len);
         // std::string line;
-        // while(std::getline(in, line)){ // DONE:直接按照字符读取的话，无法处理图片等二进制形式的文件
+        // while(std::getline(in, line)){ // DONE: 直接按照字符读取的话，无法处理图片等二进制形式的文件
         //     content += line;
         // }
         in.close();
