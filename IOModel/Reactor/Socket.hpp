@@ -10,12 +10,13 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <string>
+#include <fcntl.h>
 
 enum {
     SocketErr = 2,
     BindErr,
     ListenErr,
-
+    NonBlockErr
 };
 
 const int backlog = 10;
@@ -30,7 +31,6 @@ public:
             lg(Fatal, "socket error, %s: %d", strerror(errno), errno);
             exit(SocketErr);
         }
-        // 允许地址复用
         int opt = 1;
         setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     }
